@@ -56,6 +56,7 @@ LIBS  = $(SDK_ROOT)/components/properitary_rf/gzll/gcc/gzll_gcc.a
 
 #includes common to all targets
 INC_PATHS += -I$(abspath ../../config)
+INC_PATHS += -I$(abspath ../../../include)
 INC_PATHS += -I$(SDK_ROOT)/config
 INC_PATHS += -I$(SDK_ROOT)/components/drivers_nrf/nrf_soc_nosd
 INC_PATHS += -I$(SDK_ROOT)/components/device

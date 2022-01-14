@@ -1,4 +1,3 @@
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,6 +7,7 @@
 #include "nrf_delay.h"
 #include "nrf.h"
 #include "nrf_gzll.h"
+#include "common.h"
 
 #define MAX_TEST_DATA_BYTES     (15U)                /**< max number of test bytes to be used for tx and rx. */
 #define UART_TX_BUF_SIZE 256                         /**< UART TX buffer size. */
@@ -21,8 +21,6 @@
 #define HWFC           false
 
 
-// Define payload length
-#define PAYLOAD_LENGTH 5 ///< 5 byte payload length
 
 #define MATRIX_ROWS 10
 
@@ -44,7 +42,16 @@
 extern nrf_gzll_error_code_t nrf_gzll_error_code;   ///< Error code
 static bool init_ok, enable_ok, push_ok, pop_ok;
 
-static uint8_t channel_table[6]={4, 25, 42, 63, 77, 33};
+// #define 	NRF_GZLL_CONST_MAX_CHANNEL_TABLE_SIZE   16;Maximum channel table size allowed by Gazell. 
+// The valid channels are in the range 0 <= channel <= 125, 
+// where the actual centre frequency is (2400 + channel) MHz. 
+// The maximum channel table size is defined by NRF_GZLL_CONST_MAX_CHANNEL_TABLE_SIZE.
+//static uint8_t channel_table[6]={4, 25, 42, 63, 77, 33};
+//static uint8_t channel_table[6]={1, 41, 81, 26, 66, 106};
+//static uint8_t channel_table[6]={11, 51, 91, 36, 76, 116};
+//static uint8_t channel_table[6]={21, 61, 101, 6, 46, 86};
+//static uint8_t channel_table[6]={31, 71, 111, 16, 57, 97};
+// static uint8_t channel_table[CHANNEL_TABLE_SIZE]={1, 21, 42, 65};
 
 void uart_error_handle(app_uart_evt_t * p_event)
 {
@@ -84,13 +91,16 @@ int main(void)
 
     // Initialize Gazell
     nrf_gzll_init(NRF_GZLL_MODE_HOST);
-    nrf_gzll_set_channel_table(channel_table,6);
+    nrf_gzll_set_channel_table(combine_channel_table, CHANNEL_TABLE_SIZE * 2);
+    // 3(Decimal) => 11(Binary) enable pipe 0 and 1
+    nrf_gzll_set_rx_pipes_enabled(3);
     nrf_gzll_set_datarate(NRF_GZLL_DATARATE_1MBIT);
     nrf_gzll_set_timeslot_period(900);
 
+
     // Addressing
-    nrf_gzll_set_base_address_0(0x01020304);
-    nrf_gzll_set_base_address_1(0x05060708);
+    nrf_gzll_set_base_address_0(BASE_ADDRESS0);
+    nrf_gzll_set_base_address_1(BASE_ADDRESS1);
 
     // Enable Gazell to start sending over the air
     nrf_gzll_enable();
@@ -120,7 +130,7 @@ int main(void)
         if (app_uart_get(&c) == NRF_SUCCESS && c == 's')
         {
             // sending data to QMK, and an end byte
-            nrf_drv_uart_tx(matrix, 10);
+            nrf_drv_uart_tx(matrix, MATRIX_ROWS);
             app_uart_put(0xE0);
 
             // debugging help, for printing keystates to a serial console
