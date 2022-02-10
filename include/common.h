@@ -71,11 +71,23 @@
 #endif
 #define CHANNEL_TABLE_SIZE 4
 #define TIMESOLTS_PER_CHANNEL 4
+#define TIMESOLT_PERIOD 900
+
+#define TX_POWER_LEVEL_DEF NRF_GZLL_TX_POWER_0_DBM
+#define TX_POWER_LEVEL_MAX NRF_GZLL_TX_POWER_4_DBM
+#define TX_POWER_LEVEL_MIN NRF_GZLL_TX_POWER_N20_DBM
+// NRF_GZLL_TX_POWER_4_DBM 	    4 dBm transmit power
+// NRF_GZLL_TX_POWER_0_DBM 	    0 dBm transmit power.[DEFAULT]
+// NRF_GZLL_TX_POWER_N4_DBM 	-4 dBm transmit power.
+// NRF_GZLL_TX_POWER_N8_DBM 	-8 dBm transmit power.
+// NRF_GZLL_TX_POWER_N12_DBM 	-12 dBm transmit power.
+// NRF_GZLL_TX_POWER_N16_DBM 	-16 dBm transmit power.
+// NRF_GZLL_TX_POWER_N20_DBM 	-20 dBm transmit power. 
 
 // static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {1, 13, 21, 34, 42, 53, 61, 74};
 // static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {4, 18, 24, 39, 45, 58, 64, 79};
-static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {7, 15, 27, 36, 48, 57, 67, 75};
-// static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {10, 23, 31, 40, 50, 63, 71, 80};
+// static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {7, 15, 27, 36, 48, 57, 67, 75};
+static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {10, 23, 31, 40, 50, 63, 71, 80};
 
 
 #define COLUMNS 7

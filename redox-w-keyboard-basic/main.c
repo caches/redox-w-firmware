@@ -213,12 +213,15 @@ int main()
     // Initialize Gazell
     nrf_gzll_init(NRF_GZLL_MODE_DEVICE);
 
-    // Attempt sending every packet up to 100 times
-    nrf_gzll_set_max_tx_attempts(100);
-    // nrf_gzll_set_timeslots_per_channel(TIMESOLTS_PER_CHANNEL);
+    // Attempt sending every packet up to 50 times
+    nrf_gzll_set_max_tx_attempts(50);
+    nrf_gzll_set_timeslots_per_channel(TIMESOLTS_PER_CHANNEL);
     nrf_gzll_set_channel_table(channel_table, CHANNEL_TABLE_SIZE);
+    nrf_gzll_set_timeslots_per_channel_when_device_out_of_sync(CHANNEL_TABLE_SIZE * TIMESOLTS_PER_CHANNEL);
+    nrf_gzll_set_device_channel_selection_policy(NRF_GZLL_DEVICE_CHANNEL_SELECTION_POLICY_USE_SUCCESSFUL);
     nrf_gzll_set_datarate(NRF_GZLL_DATARATE_1MBIT);
-    nrf_gzll_set_timeslot_period(1234);
+    nrf_gzll_set_timeslot_period(TIMESOLT_PERIOD);
+    nrf_gzll_set_tx_power(TX_POWER_LEVEL_MIN);
 
 //    For NRF_GZLL_DATARATE_2MBIT the timeslot period must be >= 600 us.
 //    For NRF_GZLL_DATARATE_1MBIT the timeslot period must be >= 900 us.

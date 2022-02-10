@@ -1,5 +1,6 @@
 #!/bin/bash
 
+BINPATH="./redox-w-firmware/bin"
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 cd $SCRIPT_DIR
 
@@ -7,6 +8,8 @@ echo '=============================== MAKING ================================'
 cd custom/armgcc
 if [ "$1" == "clean" ];then
 	rm -rf _build
+    rm -rf $BINPATH/recevier.hex
+
 fi
 make
 if [[ $? -ne 0 ]] ; then
@@ -17,7 +20,7 @@ HEX=`readlink -f _build/nrf51822_xxac-receiver.hex`
 du -b $HEX
 
 cd /usr/src/nRF5_SDK_11
-BINPATH="./redox-w-firmware/bin"
+
 if [ ! -d "$BINPATH" ];then
   echo "bin path is not exists,create it"
   mkdir $BINPATH

@@ -91,11 +91,13 @@ int main(void)
 
     // Initialize Gazell
     nrf_gzll_init(NRF_GZLL_MODE_HOST);
+    nrf_gzll_set_timeslots_per_channel(TIMESOLTS_PER_CHANNEL / 2);
     nrf_gzll_set_channel_table(combine_channel_table, CHANNEL_TABLE_SIZE * 2);
     // 3(Decimal) => 11(Binary) enable pipe 0 and 1
     nrf_gzll_set_rx_pipes_enabled(3);
     nrf_gzll_set_datarate(NRF_GZLL_DATARATE_1MBIT);
-    nrf_gzll_set_timeslot_period(900);
+    nrf_gzll_set_timeslot_period(TIMESOLT_PERIOD);
+    nrf_gzll_set_tx_power(TX_POWER_LEVEL_MAX);
 
 
     // Addressing
