@@ -91,13 +91,13 @@ int main(void)
 
     // Initialize Gazell
     nrf_gzll_init(NRF_GZLL_MODE_HOST);
-    nrf_gzll_set_timeslots_per_channel(TIMESOLTS_PER_CHANNEL / 2);
+    nrf_gzll_set_timeslots_per_channel(TIMESOLTS_PER_CHANNEL);
     nrf_gzll_set_channel_table(combine_channel_table, CHANNEL_TABLE_SIZE * 2);
     // 3(Decimal) => 11(Binary) enable pipe 0 and 1
     nrf_gzll_set_rx_pipes_enabled(3);
     nrf_gzll_set_datarate(NRF_GZLL_DATARATE_1MBIT);
     nrf_gzll_set_timeslot_period(TIMESOLT_PERIOD);
-    nrf_gzll_set_tx_power(TX_POWER_LEVEL_MAX);
+    nrf_gzll_set_tx_power(TX_POWER_LEVEL_DEF);
 
 
     // Addressing
@@ -109,26 +109,26 @@ int main(void)
 
     uint8_t matrix[MATRIX_ROWS] = {0};
 
+    uint32_t payload_len = PAYLOAD_LENGTH;
+    uint8_t payload[PAYLOAD_LENGTH];
+    uint8_t c;
+
     // main loop
     while (true)
     {
-        for (int pipe = 0; pipe < 2; pipe++) {
+        for (uint8_t pipe = 0; pipe < 2; pipe++) {
             if (!nrf_gzll_get_rx_fifo_packet_count(pipe)) {
                 continue;
             }
 
-            uint32_t payload_len = PAYLOAD_LENGTH;
-            uint8_t payload[PAYLOAD_LENGTH];
-            bool ret = nrf_gzll_fetch_packet_from_rx_fifo(pipe, payload, &payload_len);
-            if (ret && payload_len == PAYLOAD_LENGTH) {
-                for (int i = 0; i < PAYLOAD_LENGTH; i++) {
+            if (nrf_gzll_fetch_packet_from_rx_fifo(pipe, payload, &payload_len) && payload_len == PAYLOAD_LENGTH) {
+                for (uint8_t i = 0; i < PAYLOAD_LENGTH; i++) {
                     matrix[i * 2 + pipe] = payload[i];
                 }
             }
         }
 
         // checking for a poll request from QMK
-        uint8_t c;
         if (app_uart_get(&c) == NRF_SUCCESS && c == 's')
         {
             // sending data to QMK, and an end byte

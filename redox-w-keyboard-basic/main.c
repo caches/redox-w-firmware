@@ -27,6 +27,7 @@ static const uint32_t COL_PINS[] = { C01, C02, C03, C04, C05, C06, C07 };
 static uint32_t inactivity_ticks = 0;
 static uint8_t keys_snapshot[ROWS] = {0};
 static uint32_t debounce_ticks = 0;
+static uint32_t input = 0;
 
 // Debounce time (dependent on tick frequency)
 #define DEBOUNCE 5
@@ -43,15 +44,7 @@ static uint32_t debounce_ticks = 0;
 // #ifdef COMPILE_RIGHT
 // static uint8_t channel_table[CHANNEL_TABLE_SIZE]={42, 65};
 // #endif
-static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {0};
 
-static void init_channel_table()
-{
-    for (int i=0; i<CHANNEL_TABLE_SIZE; i++)
-    {
-        channel_table[i] = combine_channel_table[i*2+PIPE_NUMBER];
-    }
-}
 // Setup switch pins with pullups
 static void gpio_config(void)
 {
@@ -81,11 +74,8 @@ static void gpio_config(void)
 // Return the key states
 static void read_keys(uint8_t *row_stat)
 {
-    unsigned short c;
-    uint32_t input = 0;
-    
     // scan matrix by columns
-    for (c = 0; c < COLUMNS; ++c) {
+    for (uint8_t c = 0; c < COLUMNS; ++c) {
         // Force the compiler to add one cycle gap between activating
         // the column pin and reading the input to allow some time for
         // it to be come stable. Note that compile optimizations are
@@ -107,12 +97,11 @@ static void read_keys(uint8_t *row_stat)
 
 }
 
-static bool compare_keys(const uint8_t* first, const uint8_t* second,
-                         uint32_t size)
+static bool compare_keys(const uint8_t* first, const uint8_t* second)
 {
-    for(int i=0; i < size; i++)
+    for(uint8_t i=0; i < ROWS; i++)
     {
-        if (first[i] != second[i])
+        if (first[i] ^ second[i])
         {
           return false;
         }
@@ -122,7 +111,7 @@ static bool compare_keys(const uint8_t* first, const uint8_t* second,
 
 static bool empty_keys(const uint8_t* keys_buffer)
 {
-    for(int i=0; i < ROWS; i++)
+    for(uint8_t i=0; i < ROWS; i++)
     {
         if (keys_buffer[i])
         {
@@ -136,7 +125,7 @@ static void handle_inactivity(const uint8_t *keys_buffer)
 {
     // looking for 500 ticks of no keys pressed, to go back to deep sleep
     if (empty_keys(keys_buffer)) {
-        if (++inactivity_ticks > INACTIVITY_THRESHOLD) {
+        if (++inactivity_ticks >= INACTIVITY_THRESHOLD) {
             nrf_drv_rtc_disable(&rtc);
             nrf_gpio_pin_set(C01);
             nrf_gpio_pin_set(C02);
@@ -157,8 +146,7 @@ static void handle_inactivity(const uint8_t *keys_buffer)
 
 static void handle_send(const uint8_t* keys_buffer)
 {
-    const bool no_change = compare_keys(keys_buffer, keys_snapshot, ROWS);
-    if (no_change) {
+    if (compare_keys(keys_buffer, keys_snapshot)) {
         // debouncing - send only if the keys state has been stable
         // for DEBOUNCE ticks
         if (++debounce_ticks >= DEBOUNCE) {
@@ -169,7 +157,7 @@ static void handle_send(const uint8_t* keys_buffer)
     } else {
         // change detected, start over
         debounce_ticks = 0;
-        for (int k = 0; k < ROWS; k++) {
+        for (uint8_t k = 0; k < ROWS; k++) {
             keys_snapshot[k] = keys_buffer[k];
         }
     }
@@ -209,7 +197,6 @@ static void rtc_config(void)
 
 int main()
 {
-    init_channel_table();
     // Initialize Gazell
     nrf_gzll_init(NRF_GZLL_MODE_DEVICE);
 
@@ -257,11 +244,9 @@ int main()
 /*****************************************************************************/
 /** Gazell callback function definitions  */
 /*****************************************************************************/
-
+static uint32_t ack_payload_length = NRF_GZLL_CONST_MAX_PAYLOAD_LENGTH;
 void  nrf_gzll_device_tx_success(uint32_t pipe, nrf_gzll_device_tx_info_t tx_info)
 {
-    uint32_t ack_payload_length = NRF_GZLL_CONST_MAX_PAYLOAD_LENGTH;
-
     if (tx_info.payload_received_in_ack)
     {
         // Pop packet and write first byte of the payload to the GPIO port.
@@ -270,13 +255,8 @@ void  nrf_gzll_device_tx_success(uint32_t pipe, nrf_gzll_device_tx_info_t tx_inf
 }
 
 // no action is taken when a packet fails to send, this might need to change
-void nrf_gzll_device_tx_failed(uint32_t pipe, nrf_gzll_device_tx_info_t tx_info)
-{
-
-}
+void nrf_gzll_device_tx_failed(uint32_t pipe, nrf_gzll_device_tx_info_t tx_info){}
 
 // Callbacks not needed
-void nrf_gzll_host_rx_data_ready(uint32_t pipe, nrf_gzll_host_rx_info_t rx_info)
-{}
-void nrf_gzll_disabled()
-{}
+void nrf_gzll_host_rx_data_ready(uint32_t pipe, nrf_gzll_host_rx_info_t rx_info){}
+void nrf_gzll_disabled(){}
