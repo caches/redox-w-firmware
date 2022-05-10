@@ -5,7 +5,7 @@
 #error "Only one of COMPILE_LEFT and COMPILE_RIGHT can be defined at once."
 #endif
 
-#define CHANNEL_TABLE_SIZE 2
+#define CHANNEL_TABLE_SIZE 3
 #define TIMESOLTS_PER_CHANNEL 4
 #define TIMESOLT_PERIOD 900
 
@@ -20,16 +20,17 @@
 // NRF_GZLL_TX_POWER_N16_DBM 	-16 dBm transmit power.
 // NRF_GZLL_TX_POWER_N20_DBM 	-20 dBm transmit power. 
 
+//{4, 25, 42, 63, 77, 33}
 // static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {1, 13, 21, 34, 42, 53, 61, 74};
 // static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {4, 18, 24, 39, 45, 58, 64, 79};
 // static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {7, 15, 27, 36, 48, 57, 67, 75};
-//static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {10, 23, 31, 40, 50, 63, 71, 80};
-static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {3, 38, 72, 108};
+static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {2, 25, 33, 42, 63, 77};
+//static uint8_t combine_channel_table[CHANNEL_TABLE_SIZE * 2] = {2, 38, 72, 108};
 // static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {0};
 
 #ifdef COMPILE_LEFT
 #define PIPE_NUMBER 0
-static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {3, 72};
+static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {2, 33, 63};
 #define C01 3
 #define C02 4
 #define C03 5
@@ -63,8 +64,8 @@ static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {3, 72};
 // #define BASE_ADDRESS1 0x15365775
 // #define BASE_ADDRESS1 0x23406380
 
-#define BASE_ADDRESS0 0x01020304
-#define BASE_ADDRESS1 0x05060708
+#define BASE_ADDRESS0 0x01020328
+#define BASE_ADDRESS1 0x05060423
 
 #ifdef COMPILE_RIGHT
 // static uint8_t channel_table[CHANNEL_TABLE_SIZE]={13, 34,  53, 74};
@@ -72,7 +73,7 @@ static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {3, 72};
 // static uint8_t channel_table[CHANNEL_TABLE_SIZE]={15, 36, 57, 75};
 // static uint8_t channel_table[CHANNEL_TABLE_SIZE]={23,40, 63, 80};
 #define PIPE_NUMBER 1
-static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {38, 108};
+static uint8_t channel_table[CHANNEL_TABLE_SIZE] = {25, 42, 77};
 
 #define C01 30
 #define C02 0

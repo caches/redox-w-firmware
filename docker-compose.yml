@@ -10,7 +10,7 @@ services:
     volumes:
       - ./:/usr/src/nRF5_SDK_11/redox-w-firmware
     devices:
-      - "/dev:/dev"
+      - "/dev/bus"
   # Nordic SDK toolchain
   toolchain:
     build:

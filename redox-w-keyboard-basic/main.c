@@ -25,12 +25,12 @@ static uint8_t ack_payload[NRF_GZLL_CONST_MAX_PAYLOAD_LENGTH]; ///< Placeholder 
 
 static const uint32_t COL_PINS[] = { C01, C02, C03, C04, C05, C06, C07 };
 static uint32_t inactivity_ticks = 0;
-static uint8_t keys_snapshot[ROWS] = {0};
+static uint8_t keys_snapshot[ROWS] = {0, 0, 0, 0, 0};
 static uint32_t debounce_ticks = 0;
 static uint32_t input = 0;
 
 // Debounce time (dependent on tick frequency)
-#define DEBOUNCE 5
+#define DEBOUNCE 8
 // Mark as inactive after a number of ticks:
 #define INACTIVITY_THRESHOLD 500 // 0.5sec
 
@@ -38,12 +38,6 @@ static uint32_t input = 0;
 // The valid channels are in the range 0 <= channel <= 125, 
 // where the actual centre frequency is (2400 + channel) MHz. 
 // The maximum channel table size is defined by NRF_GZLL_CONST_MAX_CHANNEL_TABLE_SIZE.
-// #ifdef COMPILE_LEFT
-// static uint8_t channel_table[CHANNEL_TABLE_SIZE]={1, 21};
-// #endif
-// #ifdef COMPILE_RIGHT
-// static uint8_t channel_table[CHANNEL_TABLE_SIZE]={42, 65};
-// #endif
 
 // Setup switch pins with pullups
 static void gpio_config(void)
@@ -200,12 +194,12 @@ int main()
     // Initialize Gazell
     nrf_gzll_init(NRF_GZLL_MODE_DEVICE);
 
-    // Attempt sending every packet up to 50 times
-    nrf_gzll_set_max_tx_attempts(50);
+    // Attempt sending every packet up to 64 times
+    nrf_gzll_set_max_tx_attempts(64);
     nrf_gzll_set_timeslots_per_channel(TIMESOLTS_PER_CHANNEL);
     nrf_gzll_set_channel_table(channel_table, CHANNEL_TABLE_SIZE);
     nrf_gzll_set_timeslots_per_channel_when_device_out_of_sync(CHANNEL_TABLE_SIZE * TIMESOLTS_PER_CHANNEL);
-    nrf_gzll_set_device_channel_selection_policy(NRF_GZLL_DEVICE_CHANNEL_SELECTION_POLICY_USE_SUCCESSFUL);
+    //nrf_gzll_set_device_channel_selection_policy(NRF_GZLL_DEVICE_CHANNEL_SELECTION_POLICY_USE_SUCCESSFUL);
     nrf_gzll_set_datarate(NRF_GZLL_DATARATE_1MBIT);
     nrf_gzll_set_timeslot_period(TIMESOLT_PERIOD);
     nrf_gzll_set_tx_power(TX_POWER_LEVEL_MIN);

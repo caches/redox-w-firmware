@@ -4,6 +4,7 @@ MAKEDIR=$(dirname "$(readlink -f "$0")")/custom/armgcc/
 HEX=_build/nrf51822_xxac-keyboard-right.hex
 
 echo '=============================== MAKING ================================'
+rm -rf $(dirname "$(readlink -f "$0")")/custom/armgcc/_build
 make -C ${MAKEDIR}
 if [[ $? -ne 0 ]] ; then
     exit 0
@@ -15,6 +16,10 @@ du -b $HEX
 echo
 echo '============================= PROGRAMMING ============================='
 {
+	echo "reset halt";
+	sleep 0.2;
+	echo "nrf51 mass_erase";
+	sleep 0.3;
 	echo "reset halt";
 	sleep 0.1;
 	echo "flash write_image erase" $HEX;

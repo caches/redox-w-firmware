@@ -25,19 +25,23 @@ if [ ! -d "$BINPATH" ];then
   echo "bin path is not exists,create it"
   mkdir $BINPATH
 fi
-mv $HEX $BINPATH/recevier.hex
-# echo
-# echo '============================= PROGRAMMING ============================='
-# {
-# 	echo "reset halt";
-# 	sleep 0.1;
-# 	echo "flash write_image erase" $HEX;
-# 	sleep 11;
-# 	echo "reset";
-# 	sleep 0.1;
-# 	exit;
+cp $HEX $BINPATH/recevier.hex
+echo
+echo '============================= PROGRAMMING ============================='
+{
+	echo "reset halt";
+	sleep 0.2;
+	echo "nrf51 mass_erase";
+	sleep 0.3;
+	echo "reset halt";
+	sleep 0.1;
+	echo "flash write_image erase" $HEX;
+	sleep 11;
+	echo "reset";
+	sleep 0.1;
+	exit;
 
-# } | telnet localhost 4444
+} | telnet 127.0.0.1 4444
 
 echo
 echo '============================== FINISHED ==============================='
