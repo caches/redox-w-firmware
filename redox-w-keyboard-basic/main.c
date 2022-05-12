@@ -30,7 +30,7 @@ static uint32_t debounce_ticks = 0;
 static uint32_t input = 0;
 
 // Debounce time (dependent on tick frequency)
-#define DEBOUNCE 8
+#define DEBOUNCE 16
 // Mark as inactive after a number of ticks:
 #define INACTIVITY_THRESHOLD 500 // 0.5sec
 
