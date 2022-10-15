@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y \
 
 # Expose port
 EXPOSE 4444
-
-CMD openocd -s /usr/local/Cellar/open-ocd/0.8.0/share/openocd/scripts/ \
-    -f interface/stlink-v2.cfg \
-    -f target/nrf51_stlink.tcl
+# on archlinux
+#CMD openocd -s /usr/share/openocd/scripts
+# on macOS
+#CMD openocd -s /usr/local/Cellar/open-ocd/0.8.0/share/openocd/scripts/ \
+    -f interface/stlink.cfg \
+    -f target/nrf51.tcl
+CMD tail -f /dev/null
